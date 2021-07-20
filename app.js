@@ -85,6 +85,30 @@ class loginView extends View {
     this.submitButton.type = "submit";
     this.submitButton.innerText = "Submit";
   }
+
+  bindSubmit(handler) {
+    this.userForm.addEventListener('submit', event => {
+      event.preventDefault();
+      if (this._userName && this._userPassword) {
+        handler(this._userName, this._userPassword);
+        this._resetInput();
+      }
+    })
+  }
+
+  get _userName() {
+    return this.userNameInput.value;
+  }
+
+  get _userPassword() {
+    return this.userPasswordInput.value;
+  }
+
+  _resetInput() {
+    this.userNameInput.value = "";
+    this.userPasswordInput.value = "";
+  }
+
 }
 
 class Model {
@@ -93,8 +117,9 @@ class Model {
     this.password = "admin@1234";
   }
 
-  authenticate(User) {
-    return User.user === this.user && User.password === this.password;
+  _getPassword(user) {
+    if (this.user === user)
+      return this.password;
   }
 }
 
@@ -102,6 +127,27 @@ class loginController {
   constructor(model, loginView) {
     this.model = model;
     this.view = loginView;
+
+    this.view.bindSubmit(this.handleSubmit);
+  }
+
+  handleSubmit = (userName, userPassWord) => {
+    if (this.authenticate({
+      user: userName,
+      password: userPassWord,
+    })) {
+      alert("LOGIN SUCCESSFUL");
+    } else {
+      alert("LOGIN FAILED");
+    }
+  }
+
+  authenticate(User) {
+    let password = this.model._getPassword(User.user);
+    if (password && password === User.password) {
+      return true;
+    }
+    return false;
   }
 }
 
