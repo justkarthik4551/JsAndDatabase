@@ -20,6 +20,28 @@ class View {
 
     return element;
   }
+
+  loaderInit() {
+    this.loader = this.createElement("div", "loader");
+    for (let i = 0; i < 12; i++) {
+      let outerDiv = this.createElement("div");
+      let innerDiv = this.createElement("div");
+      outerDiv.append(innerDiv);
+      this.loader.append(outerDiv);
+    }
+  }
+
+  toggleLoader() {
+    let displayState = this.loader.style.display;
+    if (displayState === "block") {
+      displayState = "none";
+    } else {
+      displayState = "block";
+    }
+    this.loader.style.display = displayState;
+  }
+
+
 }
 
 class loginView extends View {
@@ -37,7 +59,8 @@ class loginView extends View {
       this.userPasswordContainer,
       this.submitButton
     );
-    this.container.append(this.userForm);
+    this.loaderInit();
+    this.container.append(this.loader, this.userForm);
     this.app.append(this.container);
   }
 
@@ -91,7 +114,6 @@ class loginView extends View {
       event.preventDefault();
       if (this._userName && this._userPassword) {
         handler(this._userName, this._userPassword);
-        this._resetInput();
       }
     })
   }
@@ -131,19 +153,26 @@ class loginController {
     this.view.bindSubmit(this.handleSubmit);
   }
 
-  handleSubmit = (userName, userPassWord) => {
-    if (this.authenticate({
+  handleSubmit = async (userName, userPassWord) => {
+    this.view.toggleLoader();
+    let result = await this.authenticate({
       user: userName,
       password: userPassWord,
-    })) {
-      alert("LOGIN SUCCESSFUL");
+    });
+    if (result) {
+      this.view.toggleLoader();
+      console.log("LOGIN SUCCESSFUL");
+      this.view._resetInput();
     } else {
-      alert("LOGIN FAILED");
+      this.view.toggleLoader();
+      console.log("LOGIN FAILED");
+      this.view._resetInput();
     }
   }
 
-  authenticate(User) {
+  async authenticate(User) {
     let password = this.model._getPassword(User.user);
+    await new Promise((resolve, reject) => setTimeout(resolve, 3000));
     if (password && password === User.password) {
       return true;
     }
