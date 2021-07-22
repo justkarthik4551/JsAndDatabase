@@ -1,6 +1,7 @@
 class View {
   constructor() {
     this.app = this.getElement("#root");
+    this._init();
   }
 
   createElement(tag, className) {
@@ -41,13 +42,22 @@ class View {
     this.loader.style.display = displayState;
   }
 
+  _init() {
+    this.container = this.createElement("div", "container");
+  }
+
+  _destory() {
+    if (this.container) {
+      this.container.remove();
+    }
+  }
 
 }
 
 class loginView extends View {
   constructor() {
     super();
-    this.container = this.createElement("div", "container");
+    this.loginContainer = this.createElement("div", "loginContainer");
     this.userForm = this.createElement("form");
     this.userForm.id = "form";
     this.userForm.action = "";
@@ -60,8 +70,9 @@ class loginView extends View {
       this.submitButton
     );
     this.loaderInit();
-    this.container.append(this.loader, this.userForm);
-    this.app.append(this.container);
+    this.loginContainer.append(this.userForm);
+    this.container.append(this.loginContainer);
+    this.app.append(this.loader, this.container);
   }
 
   initializeUserName() {
@@ -133,10 +144,22 @@ class loginView extends View {
 
 }
 
+class homeView extends View {
+  constructor() {
+    super();
+    this.header = this.createElement('div');
+    this.header.innerText = "Hello";
+    this.container.append(this.header);
+    this.app.append(this.container);
+  }
+}
+
+
+
 class Model {
   constructor() {
     this.user = "admin";
-    this.password = "admin@1234";
+    this.password = "admin";
   }
 
   _getPassword(user) {
@@ -148,25 +171,27 @@ class Model {
 class loginController {
   constructor(model, loginView) {
     this.model = model;
-    this.view = loginView;
+    this.loginView = loginView;
+    this.currentView = loginView;
 
-    this.view.bindSubmit(this.handleSubmit);
+    this.currentView.bindSubmit(this.handleSubmit);
   }
 
   handleSubmit = async (userName, userPassWord) => {
-    this.view.toggleLoader();
+    this.currentView.toggleLoader();
     let result = await this.authenticate({
       user: userName,
       password: userPassWord,
     });
     if (result) {
-      this.view.toggleLoader();
-      console.log("LOGIN SUCCESSFUL");
-      this.view._resetInput();
+      this.currentView.toggleLoader();
+      this.homeView = new homeView();
+      this.currentView = this.homeView;
+      this.loginView._destory();
+
     } else {
-      this.view.toggleLoader();
-      console.log("LOGIN FAILED");
-      this.view._resetInput();
+      this.currentView.toggleLoader();
+      this.currentView._resetInput();
     }
   }
 
