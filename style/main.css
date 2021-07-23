@@ -1,12 +1,16 @@
-@import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
-
 :root {
   --cyan: #00bcd4;
   --purple: #ab47bc;
   --black: #212121;
   --grey: #616161;
   --white: #ffffff;
-  --roboto: "Roboto", sans-serif;
+  --primaryFont: "Arial", sans-serif;
+  --concept1: #202020;
+  --concept2: #3f3f3f;
+  --concept3: #707070;
+  --concept4: #ffdf6c;
+  --concept5: #ffffff;
+  --primarySize: 16px;
 }
 
 *,
@@ -15,21 +19,37 @@
   box-sizing: border-box;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+}
+
 body {
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background-image: linear-gradient(45deg, var(--cyan), var(--purple));
-  background: linear-gradient(45deg, var(--cyan), var(--purple));
-  background-color: var(--cyan); /*flowback */
 }
 
 div,
 label,
 input,
 button {
-  font-family: var(--roboto);
+  font-family: var(--primaryFont);
   color: var(--black);
+}
+
+.container {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.container.login {
+  background: linear-gradient(45deg, var(--concept2), var(--concept3));
+}
+
+.container.home {
+  background: var(--concept5);
 }
 
 .loginContainer {
@@ -178,4 +198,39 @@ button[class="js-form-btn"]:hover {
   100% {
     opacity: 0.2;
   }
+}
+
+.fixed-nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: 100%;
+  height: 50px;
+  background-color: inherit;
+  background: var(--concept1);
+}
+
+.navElement {
+  display: inline-block;
+  color: var(--concept5);
+  padding-right: 100px;
+  font-size: var(--primarySize);
+}
+
+.navTitle {
+  display: inline-block;
+  color: var(--concept5);
+  padding-right: 600px;
+  font-weight: bold;
+  font-size: var(--primarySize);
+}
+
+#navBar {
+  line-height: 50px;
+  text-align: center;
+}
+
+.selected {
+  color: var(--concept4);
 }

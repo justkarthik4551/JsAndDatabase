@@ -1,7 +1,7 @@
 class View {
-  constructor() {
+  constructor(classes) {
     this.app = this.getElement("#root");
-    this._init();
+    this.container = this.createElement("div", ("container " + classes));
   }
 
   createElement(tag, className) {
@@ -42,10 +42,6 @@ class View {
     this.loader.style.display = displayState;
   }
 
-  _init() {
-    this.container = this.createElement("div", "container");
-  }
-
   _destory() {
     if (this.container) {
       this.container.remove();
@@ -56,7 +52,7 @@ class View {
 
 class loginView extends View {
   constructor() {
-    super();
+    super("login");
     this.loginContainer = this.createElement("div", "loginContainer");
     this.userForm = this.createElement("form");
     this.userForm.id = "form";
@@ -146,11 +142,36 @@ class loginView extends View {
 
 class homeView extends View {
   constructor() {
-    super();
-    this.header = this.createElement('div');
-    this.header.innerText = "Hello";
-    this.container.append(this.header);
-    this.app.append(this.container);
+    super("home");
+    this.initializeNavBar();
+    this.app.append(this.navBarBox, this.container);
+  }
+
+  initializeNavBar() {
+    this.navBarBox = this.createElement('nav', 'fixed-nav-bar');
+    this.navBar = this.createElement('div');
+    this.navBar.id = "navBar";
+    this.navBarTitle = this.createElement('div', 'navTitle');
+    this.navBarTitle.innerText = "Project Viewer";
+    this.navBarElements = [];
+    this.navBarElements['Home'] = this.createElement('div', 'navElement selected');
+    this.navBarElements['Home'].id = "home";
+    this.navBarElements['Home'].innerText = "Home";
+    this.navBarElements['About'] = this.createElement('div', 'navElement');
+    this.navBarElements['About'].id = "About";
+    this.navBarElements['About'].innerText = "About";
+    this.navBarElements['Projects'] = this.createElement('div', 'navElement');
+    this.navBarElements['Projects'].id = "Projects";
+    this.navBarElements['Projects'].innerText = "Projects";
+    this.navBarElements['Contact'] = this.createElement('div', 'navElement');
+    this.navBarElements['Contact'].id = "Contact";
+    this.navBarElements['Contact'].innerText = "Contact";
+    this.navBar.append(this.navBarTitle,
+      this.navBarElements['Home'],
+      this.navBarElements['About'],
+      this.navBarElements['Projects'],
+      this.navBarElements['Contact']);
+    this.navBarBox.append(this.navBar);
   }
 }
 
